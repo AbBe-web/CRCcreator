@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Compte Rendu Médical</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .motif-section, .form-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="checkbox"], input[type="text"], input[type="number"], select {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Générateur de Compte Rendu Médical</h1>
+
+        <div class="motif-section">
+            <h2>Sélection des motifs de consultation</h2>
+            <form id="motifForm">
+                <div class="form-group">
+                    <label><input type="checkbox" name="motif" value="Gonalgie"> Gonalgie(s)</label>
+                    <label><input type="checkbox" name="motif" value="Lombalgie"> Lombalgie</label>
+                    <label><input type="checkbox" name="motif" value="Lomboradiculalgie"> Lomboradiculalgie</label>
+                    <label><input type="checkbox" name="motif" value="DouleurEpaule"> Douleur d'épaule</label>
+                    <label><input type="checkbox" name="motif" value="Polyarthrite"> Polyarthrite rhumatoïde : diagnostic, suivi</label>
+                    <!-- Ajoutez d'autres motifs ici -->
+                </div>
+                <button type="button" onclick="showFormSection()">Fin de la sélection du/des motif(s)</button>
+            </form>
+        </div>
+
+        <div class="form-section" id="formSection" style="display: none;">
+            <h2>Informations communes</h2>
+            <form id="commonForm">
+                <div class="form-group">
+                    <label>Sexe du médecin adresseur:</label>
+                    <select name="sexe_medecin">
+                        <option value="femme">Femme</option>
+                        <option value="homme">Homme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sexe du patient:</label>
+                    <select name="sexe_patient">
+                        <option value="femme">Femme</option>
+                        <option value="homme">Homme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date du jour:</label>
+                    <input type="text" name="date_jour" id="date_jour" readonly>
+                </div>
+                <!-- Ajoutez d'autres champs communs ici -->
+            </form>
+
+            <div id="specificForms">
+                <!-- Les formulaires spécifiques seront ajoutés ici -->
+            </div>
+
+            <button type="button" onclick="generateReport()">Générer le Compte Rendu</button>
+        </div>
+
+        <div id="reportSection" style="display: none;">
+            <h2>Compte Rendu Médical</h2>
+            <textarea id="reportText" rows="20" cols="80" readonly></textarea>
+            <div>
+                <button type="button" onclick="copyToClipboard()">Copier</button>
+                <button type="button" onclick="generatePDF()">Générer PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour afficher la date du jour
+        function setCurrentDate() {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            document.getElementById('date_jour').value = dd + '/' + mm + '/' + yyyy;
+        }
+
+        // Fonction pour afficher la section du formulaire
+        function showFormSection() {
+            setCurrentDate();
+            document.getElementById('formSection').style.display = 'block';
+            const motifs = document.querySelectorAll('input[name="motif"]:checked');
+            const specificForms = document.getElementById('specificForms');
+            specificForms.innerHTML = '';
+
+            motifs.forEach(motif => {
+                const form = document.createElement('div');
+                form.className = 'specific-form';
+                form.innerHTML = `
+                    <h3>${motif.value}</h3>
+                    <!-- Ajoutez ici les champs spécifiques pour chaque motif -->
+                    ${getSpecificForm(motif.value)}
+                `;
+                specificForms.appendChild(form);
+            });
+        }
+
+        // Fonction pour obtenir le formulaire spécifique en fonction du motif
+        function getSpecificForm(motif) {
+            switch(motif) {
+                case 'Gonalgie':
+                    return `
+                        <div class="form-group">
+                            <label>Côté:</label>
+                            <select name="cote">
+                                <option value="D">D</option>
+                                <option value="G">G</option>
+                                <option value="les 2">Les 2</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Localisation:</label>
+                            <select name="localisation">
+                                <option value="globale">Globale</option>
+                                <option value="antérieure">Antérieure</option>
+                                <option value="postérieure">Postérieure</option>
+                                <option value="interne">Interne</option>
+                                <option value="externe">Externe</option>
+                            </select>
+                        </div>
+                        <!-- Ajoutez d'autres champs spécifiques pour Gonalgie ici -->
+                    `;
+                case 'Lombalgie':
+                    return `
+                        <div class="form-group">
+                            <label>Signes associés:</label>
+                            <input type="text" name="signes_associes">
+                        </div>
+                        <!-- Ajoutez d'autres champs spécifiques pour Lombalgie ici -->
+                    `;
+                case 'Lomboradiculalgie':
+                    return `
+                        <div class="form-group">
+                            <label>Signes associés:</label>
+                            <input type="text" name="signes_associes">
+                        </div>
+                        <!-- Ajoutez d'autres champs spécifiques pour Lomboradiculalgie ici -->
+                    `;
+                case 'DouleurEpaule':
+                    return `
+                        <div class="form-group">
+                            <label>Côté:</label>
+                            <select name="cote">
+                                <option value="D">D</option>
+                                <option value="G">G</option>
+                                <option value="les 2">Les 2</option>
+                            </select>
+                        </div>
+                        <!-- Ajoutez d'autres champs spécifiques pour DouleurEpaule ici -->
+                    `;
+                case 'Polyarthrite':
+                    return `
+                        <div class="form-group">
+                            <label>Traitement actuel (Prednisone mg/j):</label>
+                            <input type="text" name="traitement_actuel">
+                        </div>
+                        <!-- Ajoutez d'autres champs spécifiques pour Polyarthrite ici -->
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        // Fonction pour générer le compte rendu
+        function generateReport() {
+            const commonForm = document.getElementById('commonForm');
+            const specificForms = document.querySelectorAll('.specific-form');
+            let reportText = '';
+
+            // Ajouter les informations communes
+            reportText += 'Informations communes:\n';
+            reportText += `Sexe du médecin adresseur: ${commonForm.sexe_medecin.value}\n`;
+            reportText += `Sexe du patient: ${commonForm.sexe_patient.value}\n`;
+            reportText += `Date du jour: ${commonForm.date_jour.value}\n\n`;
+
+            // Ajouter les informations spécifiques
+            specificForms.forEach(form => {
+                const motif = form.querySelector('h3').textContent;
+                reportText += `${motif}:\n`;
+
+                const inputs = form.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    if (input.type === 'checkbox') {
+                        if (input.checked) {
+                            reportText += `${input.name}: ${input.value}\n`;
+                        }
+                    } else {
+                        reportText += `${input.name}: ${input.value}\n`;
+                    }
+                });
+                reportText += '\n';
+            });
+
+            document.getElementById('reportText').value = reportText;
+            document.getElementById('reportSection').style.display = 'block';
+        }
+
+        // Fonction pour copier le compte rendu dans le presse-papiers
+        function copyToClipboard() {
+            const reportText = document.getElementById('reportText');
+            reportText.select();
+            document.execCommand('copy');
+            alert('Compte rendu copié dans le presse-papiers');
+        }
+
+        // Fonction pour générer un PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const reportText = document.getElementById('reportText').value;
+            doc.text(reportText, 10, 10);
+            doc.save('compte_rendu_medical.pdf');
+        }
+    </script>
+</body>
+</html>
