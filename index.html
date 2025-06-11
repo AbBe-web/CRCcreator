@@ -1,3 +1,8 @@
+Utiliser des cases à cocher plutôt que des menus déroulants peut effectivement faire gagner du temps, surtout lorsque l'utilisateur doit sélectionner plusieurs options ou lorsque les choix sont binaires (oui/non, présent/absent, etc.). Les cases à cocher permettent une sélection plus rapide et peuvent rendre l'interface plus intuitive pour les choix multiples.
+
+Je vais donc modifier le code pour remplacer les menus déroulants par des cases à cocher là où c'est pertinent. Voici comment cela pourrait être structuré :
+
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -28,7 +33,7 @@
             display: block;
             margin-bottom: 5px;
         }
-        input[type="checkbox"], input[type="text"], input[type="number"], select {
+        input[type="checkbox"], input[type="text"], input[type="number"], textarea {
             margin-bottom: 10px;
         }
         button {
@@ -42,6 +47,16 @@
         button:hover {
             background-color: #0056b3;
         }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -51,7 +66,7 @@
         <div class="motif-section">
             <h2>Sélection des motifs de consultation</h2>
             <form id="motifForm">
-                <div class="form-group">
+                <div class="checkbox-group">
                     <label><input type="checkbox" name="motif" value="Gonalgie"> Gonalgie(s)</label>
                     <label><input type="checkbox" name="motif" value="DouleurEpaule"> Douleur d'épaule</label>
                     <label><input type="checkbox" name="motif" value="Lombalgie"> Lombalgie</label>
@@ -67,17 +82,17 @@
             <form id="commonForm">
                 <div class="form-group">
                     <label>Sexe du médecin adresseur:</label>
-                    <select name="sexe_medecin">
-                        <option value="femme">Femme</option>
-                        <option value="homme">Homme</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="sexe_medecin" value="femme"> Femme</label>
+                        <label><input type="radio" name="sexe_medecin" value="homme"> Homme</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Sexe du patient:</label>
-                    <select name="sexe_patient">
-                        <option value="femme">Femme</option>
-                        <option value="homme">Homme</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="sexe_patient" value="femme"> Femme</label>
+                        <label><input type="radio" name="sexe_patient" value="homme"> Homme</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Date du jour:</label>
@@ -134,18 +149,18 @@
             return `
                 <div class="form-group">
                     <label>Début:</label>
-                    <select name="debut">
-                        <option value="progressif">Progressif</option>
-                        <option value="brutal">Brutal</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="debut" value="progressif"> Progressif</label>
+                        <label><input type="radio" name="debut" value="brutal"> Brutal</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Évolution depuis:</label>
-                    <select name="evolution">
-                        <option value="jours">Jours</option>
-                        <option value="semaines">Semaines</option>
-                        <option value="mois">Mois</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="evolution" value="jours"> Jours</label>
+                        <label><input type="radio" name="evolution" value="semaines"> Semaines</label>
+                        <label><input type="radio" name="evolution" value="mois"> Mois</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Douleur à type de:</label>
@@ -153,17 +168,17 @@
                 </div>
                 <div class="form-group">
                     <label>Douleur permanente ou intermittente:</label>
-                    <select name="type_douleur_permanence">
-                        <option value="permanente">Permanente</option>
-                        <option value="intermittente">Intermittente</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="type_douleur_permanence" value="permanente"> Permanente</label>
+                        <label><input type="radio" name="type_douleur_permanence" value="intermittente"> Intermittente</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Douleur survenant par crise:</label>
-                    <select name="douleur_crise">
-                        <option value="non">Non</option>
-                        <option value="oui">Oui</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="douleur_crise" value="non" onclick="showCriseDetails('non')"> Non</label>
+                        <label><input type="radio" name="douleur_crise" value="oui" onclick="showCriseDetails('oui')"> Oui</label>
+                    </div>
                     <div id="rythme_duree_crise" style="display: none;">
                         <label>Rythme et durée des crises:</label>
                         <input type="text" name="rythme_duree_crise">
@@ -171,11 +186,11 @@
                 </div>
                 <div class="form-group">
                     <label>Facteur déclenchant:</label>
-                    <select name="facteur_declenchant" onchange="showTraumaDetails(this.value)">
-                        <option value="aucun">Aucun</option>
-                        <option value="trauma">Traumatique</option>
-                        <option value="non_trauma">Non Traumatique</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="facteur_declenchant" value="aucun" onclick="showTraumaDetails('aucun')"> Aucun</label>
+                        <label><input type="radio" name="facteur_declenchant" value="trauma" onclick="showTraumaDetails('trauma')"> Traumatique</label>
+                        <label><input type="radio" name="facteur_declenchant" value="non_trauma" onclick="showTraumaDetails('non_trauma')"> Non Traumatique</label>
+                    </div>
                     <div id="trauma_details" style="display: none;">
                         <label>Type:</label>
                         <input type="text" name="type_trauma">
@@ -183,10 +198,10 @@
                 </div>
                 <div class="form-group">
                     <label>Horaire mécanique ou inflammatoire:</label>
-                    <select name="horaire">
-                        <option value="mecanique">Mécanique</option>
-                        <option value="inflammatoire">Inflammatoire</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="horaire" value="mecanique"> Mécanique</label>
+                        <label><input type="radio" name="horaire" value="inflammatoire"> Inflammatoire</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Traitements essayés:</label>
@@ -194,11 +209,11 @@
                 </div>
                 <div class="form-group">
                     <label>Résultats des traitements:</label>
-                    <select name="resultats_traitements">
-                        <option value="efficace">Efficace</option>
-                        <option value="bien_tolere">Bien toléré</option>
-                        <option value="mal_tolere">Mal toléré</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="resultats_traitements" value="efficace"> Efficace</label>
+                        <label><input type="radio" name="resultats_traitements" value="bien_tolere"> Bien toléré</label>
+                        <label><input type="radio" name="resultats_traitements" value="mal_tolere"> Mal toléré</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Traitements actuels:</label>
@@ -214,17 +229,17 @@
                 </div>
                 <div class="form-group">
                     <label>Réveils nocturnes:</label>
-                    <select name="reveils_nocturnes">
-                        <option value="non">Non</option>
-                        <option value="oui">Oui</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="reveils_nocturnes" value="non"> Non</label>
+                        <label><input type="radio" name="reveils_nocturnes" value="oui"> Oui</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Examens biologiques pratiqués:</label>
-                    <select name="examens_biologiques">
-                        <option value="non">Non</option>
-                        <option value="oui">Oui</option>
-                    </select>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="examens_biologiques" value="non" onclick="showExamensBioDetails('non')"> Non</label>
+                        <label><input type="radio" name="examens_biologiques" value="oui" onclick="showExamensBioDetails('oui')"> Oui</label>
+                    </div>
                     <div id="date_examens_bio" style="display: none;">
                         <label>Date:</label>
                         <input type="date" name="date_examens_bio">
@@ -244,20 +259,12 @@
 
         function showCriseDetails(value) {
             const criseDetails = document.getElementById('rythme_duree_crise');
-            if (value === 'oui') {
-                criseDetails.style.display = 'block';
-            } else {
-                criseDetails.style.display = 'none';
-            }
+            criseDetails.style.display = value === 'oui' ? 'block' : 'none';
         }
 
         function showExamensBioDetails(value) {
             const examensBioDetails = document.getElementById('date_examens_bio');
-            if (value === 'oui') {
-                examensBioDetails.style.display = 'block';
-            } else {
-                examensBioDetails.style.display = 'none';
-            }
+            examensBioDetails.style.display = value === 'oui' ? 'block' : 'none';
         }
 
         function getSpecificForm(motif) {
@@ -266,49 +273,49 @@
                     return `
                         <div class="form-group">
                             <label>Côté:</label>
-                            <select name="cote">
-                                <option value="D">D</option>
-                                <option value="G">G</option>
-                                <option value="les 2">Les 2</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="cote" value="D"> D</label>
+                                <label><input type="radio" name="cote" value="G"> G</label>
+                                <label><input type="radio" name="cote" value="les 2"> Les 2</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Localisation:</label>
-                            <select name="localisation">
-                                <option value="globale">Globale</option>
-                                <option value="antérieure">Antérieure</option>
-                                <option value="postérieure">Postérieure</option>
-                                <option value="interne">Interne</option>
-                                <option value="externe">Externe</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="localisation" value="globale"> Globale</label>
+                                <label><input type="radio" name="localisation" value="anterieure"> Antérieure</label>
+                                <label><input type="radio" name="localisation" value="posterieure"> Postérieure</label>
+                                <label><input type="radio" name="localisation" value="interne"> Interne</label>
+                                <label><input type="radio" name="localisation" value="externe"> Externe</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Association à des douleurs brèves brutales:</label>
-                            <select name="douleurs_breves_brutales">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="douleurs_breves_brutales" value="non"> Non</label>
+                                <label><input type="radio" name="douleurs_breves_brutales" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Blocages vrais:</label>
-                            <select name="blocages_vrais">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="blocages_vrais" value="non"> Non</label>
+                                <label><input type="radio" name="blocages_vrais" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Lâchages du genou:</label>
-                            <select name="lachages_genou">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="lachages_genou" value="non"> Non</label>
+                                <label><input type="radio" name="lachages_genou" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Gonflements:</label>
-                            <select name="gonflements">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="gonflements" value="non"> Non</label>
+                                <label><input type="radio" name="gonflements" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Autres symptômes éventuels:</label>
@@ -324,11 +331,11 @@
                         </div>
                         <div class="form-group">
                             <label>Genou.x normalement axé/genu varum/genu valgum:</label>
-                            <select name="genou_axe">
-                                <option value="normal">Normalement axé</option>
-                                <option value="varum">Genu varum</option>
-                                <option value="valgum">Genu valgum</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="genou_axe" value="normal"> Normalement axé</label>
+                                <label><input type="radio" name="genou_axe" value="varum"> Genu varum</label>
+                                <label><input type="radio" name="genou_axe" value="valgum"> Genu valgum</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Reproduction des douleurs à la palpation:</label>
@@ -336,17 +343,17 @@
                         </div>
                         <div class="form-group">
                             <label>Présence d'épanchement:</label>
-                            <select name="epanchement">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="epanchement" value="non"> Non</label>
+                                <label><input type="radio" name="epanchement" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Boiterie:</label>
-                            <select name="boiterie">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="boiterie" value="non"> Non</label>
+                                <label><input type="radio" name="boiterie" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Examen coxo-fémorale homolatérale:</label>
@@ -354,43 +361,43 @@
                         </div>
                         <div class="form-group">
                             <label>Examen du rachis lombaire normal:</label>
-                            <select name="examen_rachis_lombaire">
-                                <option value="oui">Oui</option>
-                                <option value="non">Non</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="examen_rachis_lombaire" value="oui"> Oui</label>
+                                <label><input type="radio" name="examen_rachis_lombaire" value="non"> Non</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Examens d'imagerie pratiqués:</label>
-                            <select name="examens_imagerie">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="examens_imagerie" value="non"> Non</label>
+                                <label><input type="radio" name="examens_imagerie" value="oui"> Oui</label>
+                            </div>
                         </div>
                     `;
                 case 'DouleurEpaule':
                     return `
                         <div class="form-group">
                             <label>Côté:</label>
-                            <select name="cote">
-                                <option value="D">D</option>
-                                <option value="G">G</option>
-                                <option value="les 2">Les 2</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="cote" value="D"> D</label>
+                                <label><input type="radio" name="cote" value="G"> G</label>
+                                <label><input type="radio" name="cote" value="les 2"> Les 2</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Localisation:</label>
-                            <select name="localisation">
-                                <option value="globale">Globale</option>
-                                <option value="antérieure">Antérieure</option>
-                                <option value="postérieure">Postérieure</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="localisation" value="globale"> Globale</label>
+                                <label><input type="radio" name="localisation" value="anterieure"> Antérieure</label>
+                                <label><input type="radio" name="localisation" value="posterieure"> Postérieure</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Association à des cervicalgies:</label>
-                            <select name="cervicalgies">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="cervicalgies" value="non"> Non</label>
+                                <label><input type="radio" name="cervicalgies" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Examen clinique épaule droite/gauche:</label>
@@ -398,10 +405,10 @@
                         </div>
                         <div class="form-group">
                             <label>Mobilité passive normale/diminuée:</label>
-                            <select name="mobilite_passive">
-                                <option value="normale">Normale</option>
-                                <option value="diminue">Diminuée</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="mobilite_passive" value="normale"> Normale</label>
+                                <label><input type="radio" name="mobilite_passive" value="diminue"> Diminuée</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Rotation externe à °/° (droit/gauche):</label>
@@ -413,55 +420,55 @@
                         </div>
                         <div class="form-group">
                             <label>Signes de conflit sous-acromial:</label>
-                            <select name="conflit_sous_acromial">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="conflit_sous_acromial" value="non"> Non</label>
+                                <label><input type="radio" name="conflit_sous_acromial" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Signes de tendinopathies du sus-épineux/infra-épineux:</label>
-                            <select name="tendinopathies_sus_epineux">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="tendinopathies_sus_epineux" value="non"> Non</label>
+                                <label><input type="radio" name="tendinopathies_sus_epineux" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Signes de tendinopathie du sous-scapulaire:</label>
-                            <select name="tendinopathie_sous_scapulaire">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="tendinopathie_sous_scapulaire" value="non"> Non</label>
+                                <label><input type="radio" name="tendinopathie_sous_scapulaire" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Signes de tendinopathies du long-biceps:</label>
-                            <select name="tendinopathies_long_biceps">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="tendinopathies_long_biceps" value="non"> Non</label>
+                                <label><input type="radio" name="tendinopathies_long_biceps" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Signes d'instabilité de l'épaule:</label>
-                            <select name="instabilite_epaule">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="instabilite_epaule" value="non"> Non</label>
+                                <label><input type="radio" name="instabilite_epaule" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Examen du rachis cervical normal:</label>
-                            <select name="examen_rachis_cervical">
-                                <option value="oui">Oui</option>
-                                <option value="non">Non</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="examen_rachis_cervical" value="oui"> Oui</label>
+                                <label><input type="radio" name="examen_rachis_cervical" value="non"> Non</label>
+                            </div>
                         </div>
                     `;
                 case 'Lombalgie':
                     return `
                         <div class="form-group">
                             <label>Signes associés - Irradiation:</label>
-                            <select name="irradiation">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="irradiation" value="non" onclick="showIrradiationDetails('non')"> Non</label>
+                                <label><input type="radio" name="irradiation" value="oui" onclick="showIrradiationDetails('oui')"> Oui</label>
+                            </div>
                             <div id="localisation_irradiation" style="display: none;">
                                 <label>Localisation:</label>
                                 <input type="text" name="localisation_irradiation">
@@ -469,10 +476,10 @@
                         </div>
                         <div class="form-group">
                             <label>Impulsivité:</label>
-                            <select name="impulsivite">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="impulsivite" value="non"> Non</label>
+                                <label><input type="radio" name="impulsivite" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Claudication (minutes ou mètres):</label>
@@ -480,10 +487,10 @@
                         </div>
                         <div class="form-group">
                             <label>Signes neurologiques déficitaires:</label>
-                            <select name="signes_neurologiques">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="signes_neurologiques" value="non"> Non</label>
+                                <label><input type="radio" name="signes_neurologiques" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Shober à 10+x:</label>
@@ -491,10 +498,10 @@
                         </div>
                         <div class="form-group">
                             <label>Signe de Lasègue:</label>
-                            <select name="lasègue">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="lasègue" value="non" onclick="showLasègueDetails('non')"> Non</label>
+                                <label><input type="radio" name="lasègue" value="oui" onclick="showLasègueDetails('oui')"> Oui</label>
+                            </div>
                             <div id="lasègue_details" style="display: none;">
                                 <label>À x° et radiculaire et/ou lombaire:</label>
                                 <input type="text" name="lasègue_details">
@@ -502,10 +509,10 @@
                         </div>
                         <div class="form-group">
                             <label>Déficit sensitivomoteur:</label>
-                            <select name="deficit_sensitivomoteur">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="deficit_sensitivomoteur" value="non"> Non</label>
+                                <label><input type="radio" name="deficit_sensitivomoteur" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Données TDM/IRM lombaire:</label>
@@ -516,24 +523,27 @@
                     return `
                         <div class="form-group">
                             <label>Trajet radiculalgie:</label>
-                            <select name="trajet_radiculalgie">
-                                <option value="L3">L3</option>
-                                <option value="L4">L4</option>
-                                <option value="L5">L5</option>
-                                <option value="S1">S1</option>
-                            </select>
-                            <select name="cote_radiculalgie">
-                                <option value="D">D</option>
-                                <option value="G">G</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="trajet_radiculalgie" value="L3"> L3</label>
+                                <label><input type="radio" name="trajet_radiculalgie" value="L4"> L4</label>
+                                <label><input type="radio" name="trajet_radiculalgie" value="L5"> L5</label>
+                                <label><input type="radio" name="trajet_radiculalgie" value="S1"> S1</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Côté:</label>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="cote_radiculalgie" value="D"> D</label>
+                                <label><input type="radio" name="cote_radiculalgie" value="G"> G</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Impulsivité:</label>
-                            <select name="impulsivite">
-                                <option value="non">Non</option>
-                                <option value="lombaire">Lombaire</option>
-                                <option value="radiculaire">Radiculaire</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="impulsivite" value="non"> Non</label>
+                                <label><input type="radio" name="impulsivite" value="lombaire"> Lombaire</label>
+                                <label><input type="radio" name="impulsivite" value="radiculaire"> Radiculaire</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Claudication (minutes ou mètres):</label>
@@ -541,10 +551,10 @@
                         </div>
                         <div class="form-group">
                             <label>Signes neurologiques déficitaires:</label>
-                            <select name="signes_neurologiques">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="signes_neurologiques" value="non"> Non</label>
+                                <label><input type="radio" name="signes_neurologiques" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Shober à 10+x:</label>
@@ -552,10 +562,10 @@
                         </div>
                         <div class="form-group">
                             <label>Signe de Lasègue:</label>
-                            <select name="lasègue">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="lasègue" value="non" onclick="showLasègueDetails('non')"> Non</label>
+                                <label><input type="radio" name="lasègue" value="oui" onclick="showLasègueDetails('oui')"> Oui</label>
+                            </div>
                             <div id="lasègue_details" style="display: none;">
                                 <label>À x° et radiculaire et/ou lombaire:</label>
                                 <input type="text" name="lasègue_details">
@@ -563,10 +573,10 @@
                         </div>
                         <div class="form-group">
                             <label>Déficit sensitivomoteur:</label>
-                            <select name="deficit_sensitivomoteur">
-                                <option value="non">Non</option>
-                                <option value="oui">Oui</option>
-                            </select>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="deficit_sensitivomoteur" value="non"> Non</label>
+                                <label><input type="radio" name="deficit_sensitivomoteur" value="oui"> Oui</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Données TDM/IRM lombaire:</label>
@@ -581,7 +591,7 @@
                         </div>
                         <div class="form-group">
                             <label>Arthralgies touchant:</label>
-                            <div>
+                            <div class="checkbox-group">
                                 <label><input type="checkbox" name="arthralgie" value="epaule_D"> Épaule D</label>
                                 <label><input type="checkbox" name="arthralgie" value="epaule_G"> Épaule G</label>
                                 <label><input type="checkbox" name="arthralgie" value="coudes_D"> Coudes D</label>
@@ -669,6 +679,16 @@
             }
         }
 
+        function showIrradiationDetails(value) {
+            const irradiationDetails = document.getElementById('localisation_irradiation');
+            irradiationDetails.style.display = value === 'oui' ? 'block' : 'none';
+        }
+
+        function showLasègueDetails(value) {
+            const lasègueDetails = document.getElementById('lasègue_details');
+            lasègueDetails.style.display = value === 'oui' ? 'block' : 'none';
+        }
+
         function generateReport() {
             const commonForm = document.getElementById('commonForm');
             const specificForms = document.querySelectorAll('.specific-form');
@@ -683,9 +703,9 @@
                 const motif = form.querySelector('h3').textContent;
                 reportText += `${motif}:\n`;
 
-                const inputs = form.querySelectorAll('input, select, textarea');
+                const inputs = form.querySelectorAll('input, textarea');
                 inputs.forEach(input => {
-                    if (input.type === 'checkbox') {
+                    if (input.type === 'checkbox' || input.type === 'radio') {
                         if (input.checked) {
                             reportText += `${input.name}: ${input.value}\n`;
                         }
@@ -717,3 +737,14 @@
     </script>
 </body>
 </html>
+```
+
+### Explications :
+
+- **Cases à cocher et boutons radio :** J'ai remplacé les menus déroulants par des cases à cocher ou des boutons radio pour les choix binaires ou multiples. Cela permet une sélection plus rapide et intuitive.
+
+- **Affichage dynamique :** Certains champs sont affichés dynamiquement en fonction des sélections de l'utilisateur, comme les détails sur les traumatismes ou les crises.
+
+- **Génération du compte rendu :** La fonction `generateReport()` compile toutes les informations en texte brut et les affiche dans une zone de texte, prêt à être copié ou exporté en PDF.
+
+Vous pouvez copier ce code dans un fichier HTML et l'ouvrir dans un navigateur pour voir le résultat. Vous devrez peut-être ajuster les styles et les champs en fonction de vos besoins spécifiques.
