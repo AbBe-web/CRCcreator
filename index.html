@@ -53,11 +53,10 @@
             <form id="motifForm">
                 <div class="form-group">
                     <label><input type="checkbox" name="motif" value="Gonalgie"> Gonalgie(s)</label>
+                    <label><input type="checkbox" name="motif" value="DouleurEpaule"> Douleur d'épaule</label>
                     <label><input type="checkbox" name="motif" value="Lombalgie"> Lombalgie</label>
                     <label><input type="checkbox" name="motif" value="Lomboradiculalgie"> Lomboradiculalgie</label>
-                    <label><input type="checkbox" name="motif" value="DouleurEpaule"> Douleur d'épaule</label>
-                    <label><input type="checkbox" name="motif" value="Polyarthrite"> Polyarthrite rhumatoïde : diagnostic, suivi</label>
-                    <!-- Ajoutez d'autres motifs ici -->
+                    <label><input type="checkbox" name="motif" value="Polyarthrite"> Polyarthrite rhumatoïde</label>
                 </div>
                 <button type="button" onclick="showFormSection()">Fin de la sélection du/des motif(s)</button>
             </form>
@@ -84,7 +83,6 @@
                     <label>Date du jour:</label>
                     <input type="text" name="date_jour" id="date_jour" readonly>
                 </div>
-                <!-- Ajoutez d'autres champs communs ici -->
             </form>
 
             <div id="specificForms">
@@ -105,7 +103,6 @@
     </div>
 
     <script>
-        // Fonction pour afficher la date du jour
         function setCurrentDate() {
             const today = new Date();
             const dd = String(today.getDate()).padStart(2, '0');
@@ -114,7 +111,6 @@
             document.getElementById('date_jour').value = dd + '/' + mm + '/' + yyyy;
         }
 
-        // Fonction pour afficher la section du formulaire
         function showFormSection() {
             setCurrentDate();
             document.getElementById('formSection').style.display = 'block';
@@ -127,14 +123,143 @@
                 form.className = 'specific-form';
                 form.innerHTML = `
                     <h3>${motif.value}</h3>
-                    <!-- Ajoutez ici les champs spécifiques pour chaque motif -->
+                    ${getCommonFields()}
                     ${getSpecificForm(motif.value)}
                 `;
                 specificForms.appendChild(form);
             });
         }
 
-        // Fonction pour obtenir le formulaire spécifique en fonction du motif
+        function getCommonFields() {
+            return `
+                <div class="form-group">
+                    <label>Début:</label>
+                    <select name="debut">
+                        <option value="progressif">Progressif</option>
+                        <option value="brutal">Brutal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Évolution depuis:</label>
+                    <select name="evolution">
+                        <option value="jours">Jours</option>
+                        <option value="semaines">Semaines</option>
+                        <option value="mois">Mois</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Douleur à type de:</label>
+                    <input type="text" name="type_douleur">
+                </div>
+                <div class="form-group">
+                    <label>Douleur permanente ou intermittente:</label>
+                    <select name="type_douleur_permanence">
+                        <option value="permanente">Permanente</option>
+                        <option value="intermittente">Intermittente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Douleur survenant par crise:</label>
+                    <select name="douleur_crise">
+                        <option value="non">Non</option>
+                        <option value="oui">Oui</option>
+                    </select>
+                    <div id="rythme_duree_crise" style="display: none;">
+                        <label>Rythme et durée des crises:</label>
+                        <input type="text" name="rythme_duree_crise">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Facteur déclenchant:</label>
+                    <select name="facteur_declenchant" onchange="showTraumaDetails(this.value)">
+                        <option value="aucun">Aucun</option>
+                        <option value="trauma">Traumatique</option>
+                        <option value="non_trauma">Non Traumatique</option>
+                    </select>
+                    <div id="trauma_details" style="display: none;">
+                        <label>Type:</label>
+                        <input type="text" name="type_trauma">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Horaire mécanique ou inflammatoire:</label>
+                    <select name="horaire">
+                        <option value="mecanique">Mécanique</option>
+                        <option value="inflammatoire">Inflammatoire</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Traitements essayés:</label>
+                    <textarea name="traitements_essayes"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Résultats des traitements:</label>
+                    <select name="resultats_traitements">
+                        <option value="efficace">Efficace</option>
+                        <option value="bien_tolere">Bien toléré</option>
+                        <option value="mal_tolere">Mal toléré</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Traitements actuels:</label>
+                    <textarea name="traitements_actuels"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Niveau de douleur actuel EVA (x/10) au repos:</label>
+                    <input type="number" name="eva_repos" min="0" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Niveau de douleur actuel EVA (x/10) à la mobilisation:</label>
+                    <input type="number" name="eva_mobilisation" min="0" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Réveils nocturnes:</label>
+                    <select name="reveils_nocturnes">
+                        <option value="non">Non</option>
+                        <option value="oui">Oui</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Examens biologiques pratiqués:</label>
+                    <select name="examens_biologiques">
+                        <option value="non">Non</option>
+                        <option value="oui">Oui</option>
+                    </select>
+                    <div id="date_examens_bio" style="display: none;">
+                        <label>Date:</label>
+                        <input type="date" name="date_examens_bio">
+                    </div>
+                </div>
+            `;
+        }
+
+        function showTraumaDetails(value) {
+            const traumaDetails = document.getElementById('trauma_details');
+            if (value === 'trauma' || value === 'non_trauma') {
+                traumaDetails.style.display = 'block';
+            } else {
+                traumaDetails.style.display = 'none';
+            }
+        }
+
+        function showCriseDetails(value) {
+            const criseDetails = document.getElementById('rythme_duree_crise');
+            if (value === 'oui') {
+                criseDetails.style.display = 'block';
+            } else {
+                criseDetails.style.display = 'none';
+            }
+        }
+
+        function showExamensBioDetails(value) {
+            const examensBioDetails = document.getElementById('date_examens_bio');
+            if (value === 'oui') {
+                examensBioDetails.style.display = 'block';
+            } else {
+                examensBioDetails.style.display = 'none';
+            }
+        }
+
         function getSpecificForm(motif) {
             switch(motif) {
                 case 'Gonalgie':
@@ -157,23 +282,90 @@
                                 <option value="externe">Externe</option>
                             </select>
                         </div>
-                        <!-- Ajoutez d'autres champs spécifiques pour Gonalgie ici -->
-                    `;
-                case 'Lombalgie':
-                    return `
                         <div class="form-group">
-                            <label>Signes associés:</label>
-                            <input type="text" name="signes_associes">
+                            <label>Association à des douleurs brèves brutales:</label>
+                            <select name="douleurs_breves_brutales">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
                         </div>
-                        <!-- Ajoutez d'autres champs spécifiques pour Lombalgie ici -->
-                    `;
-                case 'Lomboradiculalgie':
-                    return `
                         <div class="form-group">
-                            <label>Signes associés:</label>
-                            <input type="text" name="signes_associes">
+                            <label>Blocages vrais:</label>
+                            <select name="blocages_vrais">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
                         </div>
-                        <!-- Ajoutez d'autres champs spécifiques pour Lomboradiculalgie ici -->
+                        <div class="form-group">
+                            <label>Lâchages du genou:</label>
+                            <select name="lachages_genou">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Gonflements:</label>
+                            <select name="gonflements">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Autres symptômes éventuels:</label>
+                            <input type="text" name="autres_symptomes">
+                        </div>
+                        <div class="form-group">
+                            <label>Périmètre de marche (minutes ou mètres):</label>
+                            <input type="text" name="perimetre_marche">
+                        </div>
+                        <div class="form-group">
+                            <label>Examen clinique genoux D/G:</label>
+                            <input type="text" name="examen_clinique_genoux">
+                        </div>
+                        <div class="form-group">
+                            <label>Genou.x normalement axé/genu varum/genu valgum:</label>
+                            <select name="genou_axe">
+                                <option value="normal">Normalement axé</option>
+                                <option value="varum">Genu varum</option>
+                                <option value="valgum">Genu valgum</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Reproduction des douleurs à la palpation:</label>
+                            <input type="text" name="reproduction_douleurs">
+                        </div>
+                        <div class="form-group">
+                            <label>Présence d'épanchement:</label>
+                            <select name="epanchement">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Boiterie:</label>
+                            <select name="boiterie">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Examen coxo-fémorale homolatérale:</label>
+                            <input type="text" name="examen_coxo_femorale">
+                        </div>
+                        <div class="form-group">
+                            <label>Examen du rachis lombaire normal:</label>
+                            <select name="examen_rachis_lombaire">
+                                <option value="oui">Oui</option>
+                                <option value="non">Non</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Examens d'imagerie pratiqués:</label>
+                            <select name="examens_imagerie">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
                     `;
                 case 'DouleurEpaule':
                     return `
@@ -185,39 +377,313 @@
                                 <option value="les 2">Les 2</option>
                             </select>
                         </div>
-                        <!-- Ajoutez d'autres champs spécifiques pour DouleurEpaule ici -->
+                        <div class="form-group">
+                            <label>Localisation:</label>
+                            <select name="localisation">
+                                <option value="globale">Globale</option>
+                                <option value="antérieure">Antérieure</option>
+                                <option value="postérieure">Postérieure</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Association à des cervicalgies:</label>
+                            <select name="cervicalgies">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Examen clinique épaule droite/gauche:</label>
+                            <input type="text" name="examen_clinique_epaule">
+                        </div>
+                        <div class="form-group">
+                            <label>Mobilité passive normale/diminuée:</label>
+                            <select name="mobilite_passive">
+                                <option value="normale">Normale</option>
+                                <option value="diminue">Diminuée</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Rotation externe à °/° (droit/gauche):</label>
+                            <input type="text" name="rotation_externe">
+                        </div>
+                        <div class="form-group">
+                            <label>Abduction à °/° (droit/gauche):</label>
+                            <input type="text" name="abduction">
+                        </div>
+                        <div class="form-group">
+                            <label>Signes de conflit sous-acromial:</label>
+                            <select name="conflit_sous_acromial">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Signes de tendinopathies du sus-épineux/infra-épineux:</label>
+                            <select name="tendinopathies_sus_epineux">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Signes de tendinopathie du sous-scapulaire:</label>
+                            <select name="tendinopathie_sous_scapulaire">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Signes de tendinopathies du long-biceps:</label>
+                            <select name="tendinopathies_long_biceps">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Signes d'instabilité de l'épaule:</label>
+                            <select name="instabilite_epaule">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Examen du rachis cervical normal:</label>
+                            <select name="examen_rachis_cervical">
+                                <option value="oui">Oui</option>
+                                <option value="non">Non</option>
+                            </select>
+                        </div>
+                    `;
+                case 'Lombalgie':
+                    return `
+                        <div class="form-group">
+                            <label>Signes associés - Irradiation:</label>
+                            <select name="irradiation">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                            <div id="localisation_irradiation" style="display: none;">
+                                <label>Localisation:</label>
+                                <input type="text" name="localisation_irradiation">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Impulsivité:</label>
+                            <select name="impulsivite">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Claudication (minutes ou mètres):</label>
+                            <input type="text" name="claudication">
+                        </div>
+                        <div class="form-group">
+                            <label>Signes neurologiques déficitaires:</label>
+                            <select name="signes_neurologiques">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Shober à 10+x:</label>
+                            <input type="text" name="shober">
+                        </div>
+                        <div class="form-group">
+                            <label>Signe de Lasègue:</label>
+                            <select name="lasègue">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                            <div id="lasègue_details" style="display: none;">
+                                <label>À x° et radiculaire et/ou lombaire:</label>
+                                <input type="text" name="lasègue_details">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Déficit sensitivomoteur:</label>
+                            <select name="deficit_sensitivomoteur">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Données TDM/IRM lombaire:</label>
+                            <textarea name="donnees_tdm_irm"></textarea>
+                        </div>
+                    `;
+                case 'Lomboradiculalgie':
+                    return `
+                        <div class="form-group">
+                            <label>Trajet radiculalgie:</label>
+                            <select name="trajet_radiculalgie">
+                                <option value="L3">L3</option>
+                                <option value="L4">L4</option>
+                                <option value="L5">L5</option>
+                                <option value="S1">S1</option>
+                            </select>
+                            <select name="cote_radiculalgie">
+                                <option value="D">D</option>
+                                <option value="G">G</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Impulsivité:</label>
+                            <select name="impulsivite">
+                                <option value="non">Non</option>
+                                <option value="lombaire">Lombaire</option>
+                                <option value="radiculaire">Radiculaire</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Claudication (minutes ou mètres):</label>
+                            <input type="text" name="claudication">
+                        </div>
+                        <div class="form-group">
+                            <label>Signes neurologiques déficitaires:</label>
+                            <select name="signes_neurologiques">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Shober à 10+x:</label>
+                            <input type="text" name="shober">
+                        </div>
+                        <div class="form-group">
+                            <label>Signe de Lasègue:</label>
+                            <select name="lasègue">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                            <div id="lasègue_details" style="display: none;">
+                                <label>À x° et radiculaire et/ou lombaire:</label>
+                                <input type="text" name="lasègue_details">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Déficit sensitivomoteur:</label>
+                            <select name="deficit_sensitivomoteur">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Données TDM/IRM lombaire:</label>
+                            <textarea name="donnees_tdm_irm"></textarea>
+                        </div>
                     `;
                 case 'Polyarthrite':
                     return `
                         <div class="form-group">
-                            <label>Traitement actuel (Prednisone mg/j):</label>
-                            <input type="text" name="traitement_actuel">
+                            <label>Traitement actuel - Prednisone mg/j:</label>
+                            <input type="text" name="prednisone">
                         </div>
-                        <!-- Ajoutez d'autres champs spécifiques pour Polyarthrite ici -->
+                        <div class="form-group">
+                            <label>Arthralgies touchant:</label>
+                            <div>
+                                <label><input type="checkbox" name="arthralgie" value="epaule_D"> Épaule D</label>
+                                <label><input type="checkbox" name="arthralgie" value="epaule_G"> Épaule G</label>
+                                <label><input type="checkbox" name="arthralgie" value="coudes_D"> Coudes D</label>
+                                <label><input type="checkbox" name="arthralgie" value="coudes_G"> Coudes G</label>
+                                <label><input type="checkbox" name="arthralgie" value="poignets_D"> Poignets D</label>
+                                <label><input type="checkbox" name="arthralgie" value="poignets_G"> Poignets G</label>
+                                <label><input type="checkbox" name="arthralgie" value="mcp_D"> MCP D</label>
+                                <label><input type="checkbox" name="arthralgie" value="mcp_G"> MCP G</label>
+                                <label><input type="checkbox" name="arthralgie" value="ipp_D"> IPP D</label>
+                                <label><input type="checkbox" name="arthralgie" value="ipp_G"> IPP G</label>
+                                <label><input type="checkbox" name="arthralgie" value="hanches_D"> Hanches D</label>
+                                <label><input type="checkbox" name="arthralgie" value="hanches_G"> Hanches G</label>
+                                <label><input type="checkbox" name="arthralgie" value="genoux_D"> Genoux D</label>
+                                <label><input type="checkbox" name="arthralgie" value="genoux_G"> Genoux G</label>
+                                <label><input type="checkbox" name="arthralgie" value="chevilles_D"> Chevilles D</label>
+                                <label><input type="checkbox" name="arthralgie" value="chevilles_G"> Chevilles G</label>
+                                <label><input type="checkbox" name="arthralgie" value="medio_pieds_D"> Médio pieds D</label>
+                                <label><input type="checkbox" name="arthralgie" value="medio_pieds_G"> Médio pieds G</label>
+                                <label><input type="checkbox" name="arthralgie" value="avant_pieds_D"> Avant pieds D</label>
+                                <label><input type="checkbox" name="arthralgie" value="avant_pieds_G"> Avant pieds G</label>
+                                <label><input type="checkbox" name="arthralgie" value="rachis_cervical"> Rachis cervical</label>
+                                <label><input type="checkbox" name="arthralgie" value="rachis_dorsal"> Rachis dorsal</label>
+                                <label><input type="checkbox" name="arthralgie" value="rachis_lombaire"> Rachis lombaire</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>EVA douleur à x/10:</label>
+                            <input type="number" name="eva_douleur" min="0" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Raideur matinale à mn:</label>
+                            <input type="text" name="raideur_matinale">
+                        </div>
+                        <div class="form-group">
+                            <label>Réveils nocturnes nb/nuits et nuits/semaine:</label>
+                            <input type="text" name="reveils_nocturnes">
+                        </div>
+                        <div class="form-group">
+                            <label>Asthénie à x/10:</label>
+                            <input type="number" name="asthenie" min="0" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Indice articulaire à ():</label>
+                            <input type="text" name="indice_articulaire">
+                        </div>
+                        <div class="form-group">
+                            <label>Indice synovial à ():</label>
+                            <input type="text" name="indice_synovial">
+                        </div>
+                        <div class="form-group">
+                            <label>EVA évolutivité de la maladie à /100:</label>
+                            <input type="number" name="eva_evolutivite" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>CRP à x mg/l:</label>
+                            <input type="text" name="crp">
+                        </div>
+                        <div class="form-group">
+                            <label>HB:</label>
+                            <input type="text" name="hb">
+                        </div>
+                        <div class="form-group">
+                            <label>GB:</label>
+                            <input type="text" name="gb">
+                        </div>
+                        <div class="form-group">
+                            <label>Pl:</label>
+                            <input type="text" name="pl">
+                        </div>
+                        <div class="form-group">
+                            <label>ASAT:</label>
+                            <input type="text" name="asat">
+                        </div>
+                        <div class="form-group">
+                            <label>ALAT:</label>
+                            <input type="text" name="alat">
+                        </div>
+                        <div class="form-group">
+                            <label>DAS 28 est à:</label>
+                            <input type="text" name="das_28">
+                        </div>
                     `;
                 default:
                     return '';
             }
         }
 
-        // Fonction pour générer le compte rendu
         function generateReport() {
             const commonForm = document.getElementById('commonForm');
             const specificForms = document.querySelectorAll('.specific-form');
             let reportText = '';
 
-            // Ajouter les informations communes
             reportText += 'Informations communes:\n';
             reportText += `Sexe du médecin adresseur: ${commonForm.sexe_medecin.value}\n`;
             reportText += `Sexe du patient: ${commonForm.sexe_patient.value}\n`;
             reportText += `Date du jour: ${commonForm.date_jour.value}\n\n`;
 
-            // Ajouter les informations spécifiques
             specificForms.forEach(form => {
                 const motif = form.querySelector('h3').textContent;
                 reportText += `${motif}:\n`;
 
-                const inputs = form.querySelectorAll('input, select');
+                const inputs = form.querySelectorAll('input, select, textarea');
                 inputs.forEach(input => {
                     if (input.type === 'checkbox') {
                         if (input.checked) {
@@ -234,7 +700,6 @@
             document.getElementById('reportSection').style.display = 'block';
         }
 
-        // Fonction pour copier le compte rendu dans le presse-papiers
         function copyToClipboard() {
             const reportText = document.getElementById('reportText');
             reportText.select();
@@ -242,7 +707,6 @@
             alert('Compte rendu copié dans le presse-papiers');
         }
 
-        // Fonction pour générer un PDF
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
